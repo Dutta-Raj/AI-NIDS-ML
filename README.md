@@ -1,48 +1,41 @@
-# AI-NIDS – AI-Powered Intrusion Detection System
+%%writefile README.md
+# 🚨 AI-Powered Network Intrusion Detection System (NIDS)
 
-AI-NIDS is an AI-based Network Intrusion Detection System that uses machine learning to identify network threats and attacks in real-time. This project utilizes the **NSL-KDD** dataset and applies a **Random Forest classifier** to detect anomalies and classify traffic as normal or attack.
+This Streamlit app predicts whether a network connection is normal or an attack using a trained ML model on the NSL-KDD dataset.
 
----
-
-## 📊 Dataset
-
-- **Name**: NSL-KDD
-- **Source**: [Kaggle - NSL-KDD](https://www.kaggle.com/datasets/hassan06/nslkdd)
-- The dataset is a refined version of the classic KDD’99 dataset, commonly used for evaluating intrusion detection systems.
-
----
-
-## 🧠 Features
-
-- Preprocessing and encoding of categorical data (`protocol_type`, `service`, `flag`)
-- Binary classification: `normal` vs `attack`
-- Model training using **Random Forest**
-- Model evaluation: Accuracy, Confusion Matrix, Classification Report
-- Easily extendable to other models (SVM, XGBoost, etc.)
-
----
-
-## 🚀 How to Run
-
-1. Open the Jupyter notebook / Colab file: `AI-NIDS.ipynb`
-2. Download and load the NSL-KDD dataset using Kaggle API
-3. Preprocess the dataset
-4. Train and evaluate the Random Forest model
-5. View results and performance metrics
-
----
-
-## 🔧 Requirements
-
-- Python 3.x
-- pandas
-- numpy
-- scikit-learn
-- seaborn
-- matplotlib
-- Kaggle CLI (for downloading the dataset)
-
-Install required libraries using:
+## How to Run
 
 ```bash
-pip install pandas numpy scikit-learn seaborn matplotlib kaggle
+pip install -r requirements.txt
+streamlit run app.py
+
+---
+
+### 🔹 4. Push to GitHub
+
+> ✅ You can do this either locally (with Git) or via the [GitHub Web UI](https://github.com/new) for simplicity.
+
+#### ✅ Option 1: Upload via GitHub Web
+
+1. Go to: [https://github.com/new](https://github.com/new)
+2. Create a new repo (e.g., `nids-streamlit-app`)
+3. Click **“Upload files”**
+4. Upload:
+   - `app.py`
+   - `model.pkl`
+   - `requirements.txt`
+   - `README.md`
+5. Click **“Commit changes”**
+
+---
+
+#### ✅ Option 2: Use Git Locally (if you're on your PC)
+
+If working from your PC:
+
+```bash
+git init
+git remote add origin https://github.com/YOUR_USERNAME/nids-streamlit-app.git
+git add .
+git commit -m "Initial commit"
+git push -u origin master

@@ -1,16 +1,15 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import pickle
 
-# Load the trained model
+# Load trained model
 model = pickle.load(open("model.pkl", "rb"))
 
+st.set_page_config(page_title="AI-Powered NIDS", page_icon="🚨")
 st.title("🚨 AI-Powered Network Intrusion Detection System (NIDS)")
+st.markdown("This app predicts whether a network connection is **normal** or an **attack** based on input features from the NSL-KDD dataset.")
 
-st.write("Enter network connection features below to predict if it's an attack or normal.")
-
-# Sample numeric inputs (adjust as per your dataset)
+# Feature names based on NSL-KDD dataset
 feature_names = [
     'duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes',
     'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins', 'logged_in',
@@ -24,16 +23,21 @@ feature_names = [
     'dst_host_srv_rerror_rate'
 ]
 
-# Create user input form
-user_input = {}
-with st.form("nids_form"):
-    for feature in feature_names:
-        user_input[feature] = st.number_input(f"{feature}", value=0.0)
-    submitted = st.form_submit_button("Predict")
+# User input form
+st.sidebar.header("🛠️ Input Network Features")
+input_data = {}
+for feature in feature_names:
+    input_data[feature] = st.sidebar.number_input(f"{feature}", value=0.0)
 
-if submitted:
-    # Convert input to DataFrame
-    input_df = pd.DataFrame([user_input])
+# Predict button
+if st.sidebar.button("🔍 Predict"):
+    input_df = pd.DataFrame([input_data])
     prediction = model.predict(input_df)[0]
-    label = "✅ Normal" if prediction == "normal" or prediction == 0 else "🚨 Attack"
-    st.success(f"Prediction: **{label}**")
+
+    if prediction in [0, 'normal']:
+        st.success("✅ Prediction: Normal Traffic")
+    else:
+        st.error("🚨 Prediction: Attack Detected!")
+
+    st.subheader("🔢 Raw Model Output")
+    st.write(f"Prediction Value: {prediction}")

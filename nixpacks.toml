@@ -1,0 +1,15 @@
+[build]
+nixpacksVersion = "1.38.0"
+
+[phases.setup]
+packages = ["python3", "gcc"]
+
+[phases.install]
+cmds = [
+  "python -m venv --copies /opt/venv",
+  ". /opt/venv/bin/activate",
+  "pip install -r requirements.txt"
+]
+
+[start]
+cmd = "streamlit run app.py --server.port=$PORT --server.address=0.0.0.0"

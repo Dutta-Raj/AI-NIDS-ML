@@ -5,42 +5,39 @@ import pickle
 # Load trained model
 model = pickle.load(open("model.pkl", "rb"))
 
-st.set_page_config(page_title="Is This Network Safe?", page_icon="🛡️")
-st.title("🛡️ Is This Network Safe?")
-st.markdown("Let AI detect if your current internet activity is **safe** or **suspicious**.")
+st.set_page_config(page_title="AI-Powered NIDS", page_icon="🚨")
+st.title("🚨 AI-Powered Network Intrusion Detection System (NIDS)")
+st.markdown("This app predicts whether a network connection is **normal** or an **attack** based on input features from the NSL-KDD dataset.")
 
-# --- User-friendly inputs ---
-protocol = st.radio("Which protocol is being used?", ["TCP", "UDP", "ICMP"])
-activity = st.radio("What are you doing online?", ["Browsing websites", "Sending emails", "Downloading files", "Other"])
-data_sent = st.slider("Data sent (in KB)", 0, 10000, 500)
-data_received = st.slider("Data received (in KB)", 0, 10000, 1000)
+# Feature names based on NSL-KDD dataset
+feature_names = [
+    'duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes',
+    'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins', 'logged_in',
+    'num_compromised', 'root_shell', 'su_attempted', 'num_root', 'num_file_creations',
+    'num_shells', 'num_access_files', 'num_outbound_cmds', 'is_host_login',
+    'is_guest_login', 'count', 'srv_count', 'serror_rate', 'srv_serror_rate',
+    'rerror_rate', 'srv_rerror_rate', 'same_srv_rate', 'diff_srv_rate',
+    'srv_diff_host_rate', 'dst_host_count', 'dst_host_srv_count', 'dst_host_same_srv_rate',
+    'dst_host_diff_srv_rate', 'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate',
+    'dst_host_serror_rate', 'dst_host_srv_serror_rate', 'dst_host_rerror_rate',
+    'dst_host_srv_rerror_rate'
+]
 
-# --- Map activity to service value ---
-service_map = {
-    "Browsing websites": "http",
-    "Sending emails": "smtp",
-    "Downloading files": "ftp",
-    "Other": "other"
-}
+# User input form
+st.sidebar.header("🛠️ Input Network Features")
+input_data = {}
+for feature in feature_names:
+    input_data[feature] = st.sidebar.number_input(f"{feature}", value=0.0)
 
-# --- Build input data (6 features only) ---
-input_data = {
-    'duration': 5,  # fixed short session duration
-    'protocol_type': protocol.lower(),
-    'service': service_map[activity],
-    'flag': 'SF',  # standard connection flag
-    'src_bytes': data_sent,
-    'dst_bytes': data_received
-}
-
-# --- Predict ---
-if st.button("🔍 Check Now"):
+# Predict button
+if st.sidebar.button("🔍 Predict"):
     input_df = pd.DataFrame([input_data])
     prediction = model.predict(input_df)[0]
 
     if prediction in [0, 'normal']:
-        st.success("✅ You're Safe! No threats detected.")
+        st.success("✅ Prediction: Normal Traffic")
     else:
-        st.error("🚨 Suspicious activity detected! Be cautious.")
+        st.error("🚨 Prediction: Attack Detected!")
 
-    st.caption("Prediction made using AI trained on network data (NSL-KDD).")
+    st.subheader("🔢 Raw Model Output")
+    st.write(f"Prediction Value: {prediction}")

@@ -1,5 +1,5 @@
 
-🚨 AI-Powered Network Intrusion Detection System (NIDS) https://1708d8744a7b.ngrok-free.app/ check.....
+🚨 AI-Powered Network Intrusion Detection System (NIDS)https://ai-nids-ml-ztkxb2vgyc5cm57quwophl.streamlit.app/ check.....
 
 This Streamlit app predicts whether a network connection is normal or an attack using a trained ML model on the NSL-KDD dataset.
 

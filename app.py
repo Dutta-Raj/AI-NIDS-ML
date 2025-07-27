@@ -2,12 +2,14 @@ import streamlit as st
 import pandas as pd
 import pickle
 
+# Load trained model
 model = pickle.load(open("model.pkl", "rb"))
 
 st.set_page_config(page_title="AI-Powered NIDS", page_icon="🚨")
 st.title("🚨 AI-Powered Network Intrusion Detection System")
 st.markdown("This app uses a trained AI model to detect potential intrusions in network traffic.")
 
+# Sidebar Inputs
 st.sidebar.header("🧰 Input Network Info")
 
 protocol = st.sidebar.radio("📡 Protocol", ["TCP", "UDP", "ICMP"])
@@ -18,6 +20,7 @@ data_received = st.sidebar.slider("📥 Data Received (bytes)", 0, 10000, 1000)
 protocol_map = {"TCP": 0, "UDP": 1, "ICMP": 2}
 activity_map = {"Browsing websites": 0, "Sending emails": 1, "Downloading files": 2, "Other": 3}
 
+# Prepare input
 input_dict = {
     "protocol_type": protocol_map[protocol],
     "activity_type": activity_map[activity],
@@ -27,12 +30,26 @@ input_dict = {
 
 input_df = pd.DataFrame([input_dict])
 
-if st.sidebar.button("🔍 Predict"):
-    prediction = model.predict(input_df)[0]
-    if prediction in [0, 'normal']:
-        st.success("✅ Prediction: Normal Traffic")
-    else:
-        st.error("🚨 Prediction: Attack Detected!")
+# Reorder columns to match model training input
+try:
+    input_df = input_df[model.feature_names_in_]
+except AttributeError:
+    st.warning("⚠️ Your model does not store feature names (feature_names_in_). Proceeding without column check.")
+except KeyError as e:
+    st.error(f"❌ Column mismatch: {e}")
+    st.stop()
 
-    st.subheader("📊 Raw Output")
-    st.write(f"Prediction: {prediction}")
+# Prediction button
+if st.sidebar.button("🔍 Predict"):
+    try:
+        prediction = model.predict(input_df)[0]
+
+        if prediction in [0, 'normal']:
+            st.success("✅ Prediction: Normal Traffic")
+        else:
+            st.error("🚨 Prediction: Attack Detected!")
+
+        st.subheader("📊 Raw Output")
+        st.write(f"Prediction: {prediction}")
+    except Exception as e:
+        st.error(f"❌ Error during prediction: {e}")

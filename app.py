@@ -18,26 +18,20 @@ data_sent = st.sidebar.slider("📤 Data Sent (bytes)", 0, 10000, 500)
 data_received = st.sidebar.slider("📥 Data Received (bytes)", 0, 10000, 1000)
 
 protocol_map = {"TCP": 0, "UDP": 1, "ICMP": 2}
-activity_map = {"Browsing websites": 0, "Sending emails": 1, "Downloading files": 2, "Other": 3}
+activity_map = {
+    "Browsing websites": 0,
+    "Sending emails": 1,
+    "Downloading files": 2,
+    "Other": 3
+}
 
 # Prepare input
-input_dict = {
+input_df = pd.DataFrame([{
     "protocol_type": protocol_map[protocol],
     "activity_type": activity_map[activity],
     "src_bytes": data_sent,
     "dst_bytes": data_received
-}
-
-input_df = pd.DataFrame([input_dict])
-
-# Reorder columns to match model training input
-try:
-    input_df = input_df[model.feature_names_in_]
-except AttributeError:
-    st.warning("⚠️ Your model does not store feature names (feature_names_in_). Proceeding without column check.")
-except KeyError as e:
-    st.error(f"❌ Column mismatch: {e}")
-    st.stop()
+}])
 
 # Prediction button
 if st.sidebar.button("🔍 Predict"):
